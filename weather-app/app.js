@@ -1,11 +1,12 @@
-console.log('Starting');
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
-setTimeout(() => {
-    console.log('2 Second Timer');
-}, 2000);
+geocode('Denver', (error, data) => {
+    console.log('Error: ', error);
+    console.log('Data: ', data);
+});
 
-setTimeout(() => {
-    console.log('0 Second Timeer');
-}, 0);
-
-console.log('Stopping');
+forecast(-104.9653, 39.7348, (error, data) => {
+    console.log('Error: ', error);
+    console.log('Data: ', data);
+});
