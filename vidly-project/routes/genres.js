@@ -3,10 +3,6 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/vidly', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
-    .then(() => console.log('Successfully Connected to MongoDB...'))
-    .catch(error => console.error('Failed to Connect to MongoDB -', error));
-
 const genreSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -44,13 +40,12 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const genre = await Genre.findById(req.params.id);
-
-    if (!genre) {
-        return res.status(400).send('Genre Not Found.');
+    try {
+        const genre = await Genre.findById(req.params.id);
+        res.send(genre);
+    } catch (error) {
+        res.send(`Genre Not Found || Possible Server Error - ${error}`);
     }
-
-    res.send(genre);
 });
 
 router.put('/:id', async (req, res) => {
