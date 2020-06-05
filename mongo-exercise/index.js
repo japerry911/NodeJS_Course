@@ -15,7 +15,7 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 
-async function getMethod() {
+async function getMethod1() {
     const courses = await Course
         .find({ tags: { $in: ['backend'] }, isPublished: true })
         .sort({ name: 1 })
@@ -24,6 +24,20 @@ async function getMethod() {
     return courses;
 }
 
-getMethod()
+/*getMethod1()
     .then(response => console.log(response))
-    .catch(error => console.error('Error in getMethod:', error));
+    .catch(error => console.error('Error in getMethod1:', error));*/
+
+async function getMethod2() {
+    const courses = await Course
+        .find({ isPublished: true, tags: { $in: ['backend', 'frontend'] } })
+        // .or([{ tags: 'frontend' }, { tags: 'backend' }])
+        .sort({ price: -1 })
+        .select({ name: 1, author: 1 });
+    
+    return courses;
+}
+
+getMethod2()
+    .then(response => console.log(response))
+    .catch(error => console.error('Error in getMethod2:', error));
