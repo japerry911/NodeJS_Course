@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/playground')
+mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Successfully Connected to MongoDB...'))
     .catch(error => console.error('Error in Connecting to MongoDB -', error));
 
@@ -12,7 +12,10 @@ const authorSchema = new mongoose.Schema({
 
 const courseSchema = new mongoose.Schema({
     name: String,
-    author: authorSchema
+    author: {
+        type: authorSchema,
+        required: true
+    }
 });
 
 const Author = mongoose.model('Author', authorSchema);
@@ -47,3 +50,17 @@ async function listCourses() {
     
     console.log(courses);
 }
+
+async function updateAuthor(courseId) {
+    //const course = await Course.findById(courseId);
+    //course.author.name = 'Mosh Hamedani';
+    //course.save();
+    await Course.updateOne({ _id: courseId }, {
+        $set: {
+            'author.name': 'Skylord2'
+        }
+    });
+}
+
+// createCourse('Node Course', new Author({ name: 'Mosh' }));
+updateAuthor('5edaaaf95a2e6d31de6ed4f9');
