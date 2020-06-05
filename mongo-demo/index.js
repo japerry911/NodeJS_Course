@@ -31,19 +31,65 @@ async function getCourses() {
     const pageSize = 10;
 
     const courses = await Course
-        .find({ author: 'Mosh', isPublished: true })
-        .skip((pageNumber - 1) * pageSize)
-        .limit(pageSize)
+        // .find({ author: 'Mosh', isPublished: true })
+        // .skip((pageNumber - 1) * pageSize)
+        // .limit(pageSize)
         // .find({ price: { $gte: 10, $lte: 20 } })
         // .find({ price: { $in: [10, 15, 20] } })
         // .find()
         // .or([{ author: 'Mosh' }, { isPublished: true } ])
         // .and([{ author: 'Mosh' }, { isPublished: true }])
         // .find({ author: /^.*os.*$/ })
+        .find()
         .sort({ name: 1 })
         .select({ name: 1, tags: 1 });
         // .countDocuments();
     console.log(courses);
 }
 
-getCourses();
+async function updateCourse1(id) {
+    //Approach 1: Query First
+    // findById()
+    // Modifiy it's properties
+    // save()
+    const course = await Course.findById(id);
+
+    if (!course) {
+        return;
+    }
+
+    // course.isPublished = true;
+    // course.author = 'Another Author';
+    course.set({
+        isPublished: false,
+        author: 'Another Author'
+    });
+
+    const result = await course.save();
+    console.log(result);
+}
+
+async function updateCourse2(id) {
+    // Approach 2: Update first
+    // Update directly
+    // Optionally: get the updated document
+    /*const result = await Course.update({ _id: id }, {
+        $set: {
+            author: 'Moshh',
+            isPublished: false
+        }
+    })*/
+
+    const result = await Course.findByIdAndUpdate(id, {
+        $set: {
+            author: 'Skylord2',
+            isPublished: false
+        }
+    }, { new: true });
+
+    console.log(result);
+}
+
+//getCourses();
+//updateCourse1('5eda75a5be8fbda1d27e0f45');
+updateCourse2('5eda75a5be8fbda1d27e0f45');
