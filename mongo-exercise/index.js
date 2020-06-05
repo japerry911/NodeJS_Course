@@ -38,6 +38,20 @@ async function getMethod2() {
     return courses;
 }
 
-getMethod2()
+/*getMethod2()
     .then(response => console.log(response))
-    .catch(error => console.error('Error in getMethod2:', error));
+    .catch(error => console.error('Error in getMethod2:', error));*/
+
+async function getMethod3() {
+    const courses = await Course
+        .find({ isPublished: true })
+        .or([{ price: { $gte: 15 } }, { name: /^.*by.*$/i }])
+        .sort({ price: -1 })
+        .select({ name: 1, author: 1, price: 1 });
+    
+    return courses;
+}
+
+getMethod3()
+    .then(response => console.log(response))
+    .catch(error => console.error('Error in getMethod3', error));
