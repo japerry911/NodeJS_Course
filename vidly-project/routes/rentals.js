@@ -1,9 +1,11 @@
 const { Rental, validateRental } = require('../models/rental');
 const { Movie } = require('../models/movie');
-const { Customer } = require('../model/customer');
-const mongoose = require('mongoose');
+const { Customer } = require('../models/customer');
+const Transaction = require('mongoose-transactions');
 const express = require('express');
 const router = express.Router();
+
+const transaction = new Transaction();
 
 router.get('/', async (req, res) => {
     const rentals = await Rental
@@ -51,7 +53,8 @@ router.post('/', async (req, res) => {
         customer: {
             _id: customer._id,
             name: customer.name,
-            phone: customer.phone
+            phone: customer.phone,
+            isGold: customer.isGold
         },
         movie: {
             _id: movie._id,
@@ -61,13 +64,14 @@ router.post('/', async (req, res) => {
     });
 
     try {
-        const result = rental.save();
+        transaction.insert('Rental', rental);
+        transaction.update('Movie', movie._id, { $inc: { numberInStock: -1 }});
+        await transaction.run();
 
-        movie.numberInStock--;
-        movie.save();
-
-        res.send(result);
+        res.send(rental);
     } catch (error) {
-        res.status(400).send(`Error - ${error}`);
+        res.status(500).send(error);
     }
 });
+
+module.exports = router;

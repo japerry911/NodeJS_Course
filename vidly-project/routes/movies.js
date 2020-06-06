@@ -5,8 +5,7 @@ const { Genre } = require('../models/genre');
 
 router.get('/', async (req, res) => {
     const movies = await Movie
-        .find()
-        .populate('genre');
+        .find();
     
     res.send(movies);
 });
@@ -20,7 +19,7 @@ router.post('/', async (req, res) => {
     }
 
     const genre = await Genre.findById(req.body.genreId);
-
+        
     const movie = new Movie({
         title: req.body.title,
         genre: {
