@@ -1,6 +1,7 @@
 const { validationMovie, Movie } = require('../models/movie');
 const express = require('express');
 const router = express.Router();
+const { Genre } = require('../models/genre');
 
 router.get('/', async (req, res) => {
     const movies = await Movie
@@ -18,7 +19,17 @@ router.post('/', async (req, res) => {
         return res.status(400).send(`Error(s): ${errors.join(', ')}`);
     }
 
-    const movie = new Movie(req.body);
+    const genre = await Genre.findById(req.body.genreId);
+
+    const movie = new Movie({
+        title: req.body.title,
+        genre: {
+            _id: genre._id,
+            name: genre.name
+        },
+        numberInStock: req.body.numberInStock,
+        dailyRentalRate: req.body.dailyRentalRate
+    });
 
     try {
         const result = await movie.save();
@@ -53,7 +64,15 @@ router.put('/:id', async(req, res) => {
     }
 
     try {
-        const result = await Movie.findByIdAndUpdate(req.params.id, req.body);
+        const result = await Movie.findByIdAndUpdate(req.params.id, {
+            title: req.body.title,
+            genre: {
+                _id: genre._id,
+                name: genre.name
+            },
+            numberInStock: req.body.numberInStock,
+            dailyRentalRate: req.body.dailyRentalRate
+        });
         
         if (!result) {
             return res.status(400).send('Movie Not Found.');

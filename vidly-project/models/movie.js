@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
-const { Genre } = require('./genre');
+const { Genre, genreSchema } = require('./genre');
 
 const movieSchema = new mongoose.Schema({
     title: {
@@ -10,9 +10,8 @@ const movieSchema = new mongoose.Schema({
         maxlength: 50
     },
     genre: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: genreSchema,
         required: true,
-        ref: 'Genre'
     },
     numberInStock: {
         type: Number,
@@ -28,7 +27,7 @@ const Movie = mongoose.model('Movie', movieSchema);
 
 async function validationMovie(movie) {
     try {
-        const genre = await Genre.findById(movie.genre).countDocuments();
+        const genre = await Genre.findById(movie.genreId).countDocuments();
         if (!genre) {
             return { error: { details: [{ message: 'Genre does not exist.' }]}};
         }
@@ -38,7 +37,7 @@ async function validationMovie(movie) {
 
     const schema = {
         title: Joi.string().min(2).max(50).required(),
-        genre: Joi.required(),
+        genreId: Joi.required(),
         numberInStock: Joi.number().required(),
         dailyRentalRate: Joi.number().required()
     };
