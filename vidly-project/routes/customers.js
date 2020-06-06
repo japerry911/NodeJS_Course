@@ -30,6 +30,11 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const customer = await Customer.findById(req.params.id);
+
+        if (!customer) {
+            return res.send('Customer Not Found.');
+        }
+
         res.send(customer);
     } catch (error) {
         res.send(`Customer Not Found || Possible Server Error - ${error}`);
@@ -45,7 +50,12 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        await Customer.findByIdAndUpdate(req.params.id, req.body);
+        const result = await Customer.findByIdAndUpdate(req.params.id, req.body);
+
+        if (!result) {
+            return res.status(400).send('Customer Not Found.');
+        }
+
         res.status(200).send('Updated Successfully.');
     } catch (error) {
         res.status(400).send(`Customer Not Found || Potential Server Error - ${error}`);
@@ -54,7 +64,12 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        await Customer.findByIdAndDelete(req.params.id);
+        const result = await Customer.findByIdAndDelete(req.params.id);
+
+        if (!result) {
+            return res.status(400).send('Customer Not Found.');
+        }
+
         res.status(200).send('Deleted Successfully.');
     } catch (error) {
         res.status(400).send(`Customer Not Found || Potential Server Error - ${error}`);
