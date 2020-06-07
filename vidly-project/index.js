@@ -5,6 +5,8 @@ const rentals = require('./routes/rentals');
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 
 app.use(express.json());
 app.use('/api/genres', genres);

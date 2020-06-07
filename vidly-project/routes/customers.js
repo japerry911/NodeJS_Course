@@ -20,8 +20,8 @@ router.post('/', async (req, res) => {
     const customer = new Customer(req.body);
 
     try {
-        const result = await customer.save();
-        res.send(result);
+        await customer.save();
+        res.send(customer);
     } catch (error) {
         res.status(400).send(`Error - ${error}`);
     }

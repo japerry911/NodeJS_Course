@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { error } = await validationMovie(req.body);
+    const { error } = validationMovie(req.body);
 
     if (error) {
         const errors = error.details.map(errorObject => errorObject.message);
@@ -19,6 +19,10 @@ router.post('/', async (req, res) => {
     }
 
     const genre = await Genre.findById(req.body.genreId);
+
+    if (!genre) {
+        return res.status(400).send('Genre Not Found.');
+    }
         
     const movie = new Movie({
         title: req.body.title,
@@ -31,8 +35,8 @@ router.post('/', async (req, res) => {
     });
 
     try {
-        const result = await movie.save();
-        res.send(result);
+        await movie.save();
+        res.send(movie);
     } catch (error) {
         res.status(400).send(`Error - ${error}`);
     }
