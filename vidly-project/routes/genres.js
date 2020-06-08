@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const { validateGenre, Genre } = require('../models/genre');
 const express = require('express');
 const router = express.Router();
@@ -9,7 +10,7 @@ router.get('/', async (req, res) => {
     res.send(genres);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validateGenre(req.body);
 
     if (error) {
