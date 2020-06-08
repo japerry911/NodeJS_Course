@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const { validateUser, User } = require('../models/user');
@@ -24,8 +25,9 @@ router.post('/', async (req, res) => {
 
     try {
         const result = await user.save();
+        const token = user.generateAuthToken();
 
-        res.send(_.pick(result, ['_id', 'name', 'email']));        
+        res.header('x-auth-token', token).send(_.pick(result, ['_id', 'name', 'email']));        
     } catch (error) {
         res.status(400).send(`Server Error: ${error}`);
     }
